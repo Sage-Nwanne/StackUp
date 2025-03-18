@@ -67,6 +67,40 @@ frontend/
 
 ---
 
+## **Endpoints**
+### **Authentication Routes**
+| Method | Endpoint      | Description |
+|--------|-------------|-------------|
+| POST   | `/auth/register` | Register a new user |
+| POST   | `/auth/login` | Authenticate user and return JWT |
+| GET    | `/auth/user` | Fetch authenticated user details |
+
+### **Board Routes**
+| Method | Endpoint      | Description |
+|--------|-------------|-------------|
+| POST   | `/boards` | Create a new board |
+| GET    | `/boards` | Get all boards for the user |
+| PUT    | `/boards/:id` | Update board details |
+| DELETE | `/boards/:id` | Delete a board |
+
+### **List Routes**
+| Method | Endpoint      | Description |
+|--------|-------------|-------------|
+| POST   | `/lists` | Create a new list inside a board |
+| GET    | `/lists/:boardId` | Get lists for a specific board |
+| PUT    | `/lists/:id` | Update list details |
+| DELETE | `/lists/:id` | Delete a list |
+
+### **Card Routes**
+| Method | Endpoint      | Description |
+|--------|-------------|-------------|
+| POST   | `/cards` | Create a new card in a list |
+| GET    | `/cards/:listId` | Get cards for a specific list |
+| PUT    | `/cards/:id` | Update card details |
+| DELETE | `/cards/:id` | Delete a card |
+
+---
+
 ## **Tailwind CSS Configuration**
 ### **Global Styles**
 ```css
