@@ -14,24 +14,28 @@
 
 ## **Core Features**
 ### **User Authentication**
-- Secure login and signup using JWT.
-- Passwords stored securely with bcrypt.
-- Protected API routes.
+- Sign up, login, and logout functionality.
+- JWT-based authentication with secure password hashing.
+- Authenticated API routes for protected access.
 
 ### **Board Management**
-- Users can create, update, and delete boards.
-- Boards contain multiple lists.
+- Create, update, and delete boards.
+- Boards store lists that contain cards.
+- Each board is associated with an authenticated user.
 
 ### **List Management**
-- Lists belong to boards and contain cards.
-- Lists can be reordered within boards.
+- Create, update, and delete lists within a board.
+- Lists hold multiple cards.
+- Lists can be reordered within a board.
 
 ### **Card Management**
-- Cards belong to lists and can be moved across lists.
-- Users can add labels, due dates, and descriptions to cards.
+- Create, update, and delete cards inside a list.
+- Move cards between lists using drag-and-drop.
+- Assign labels and due dates to cards.
 
 ### **Activity Logging**
-- Track and log board actions.
+- Track actions such as card movements, edits, and deletions.
+- Display an activity feed for users to review board history.
 
 ---
 
