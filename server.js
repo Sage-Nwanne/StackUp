@@ -8,9 +8,10 @@ const cors = require('cors');
 const logger = require('morgan');
 
 // Import routers
-const authRouter = require('./express-api-jwt-auth-template/controllers/auth');
-const testJwtRouter = require('./express-api-jwt-auth-template/controllers/test-jwt');
-const usersRouter = require('./express-api-jwt-auth-template/controllers/users');
+const authRouter = require('./controllers/auth');
+const testJwtRouter = require('./controllers/test-jwt');
+const usersRouter = require('./controllers/users');
+const dasboardRouter = require("./controllers/dashboard")
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI);
@@ -28,6 +29,7 @@ app.use(logger('dev'));
 app.use('/auth', authRouter);
 app.use('/test-jwt', testJwtRouter);
 app.use('/users', usersRouter);
+app.use("/dashboard", dasboardRouter);
 
 // Start the server and listen on port 3000
 app.listen(3000, () => {
