@@ -8,9 +8,9 @@ const cors = require('cors');
 const logger = require('morgan');
 
 // Import routers
-const authRouter = require('./express-api-jwt-auth-template/controllers/auth');
-const testJwtRouter = require('./express-api-jwt-auth-template/controllers/test-jwt');
-const usersRouter = require('./express-api-jwt-auth-template/controllers/users');
+const authRouter = require('./controllers/auth');
+const testJwtRouter = require('./controllers/test-jwt');
+const usersRouter = require('./controllers/users');
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI);
