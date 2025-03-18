@@ -28,3 +28,9 @@ Start the app in your terminal with:
 ``` sh
 npm run dev
 ```
+
+
+I SIGN UP -> 
+I SIGN IN 
+...REDIRECTED TO DASHBOARD
+...I SEE DASHBOARD THAT STORES MY BOARDS
