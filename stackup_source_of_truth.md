@@ -160,12 +160,10 @@ frontend/
 
 ## **Deployment Process**
 ### **Backend Deployment (Heroku)**
-```
-```
+
 
 ### **Frontend Deployment (Netlify)**
-```
-```
+
 
 ---
 
