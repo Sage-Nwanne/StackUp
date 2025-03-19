@@ -36,7 +36,6 @@ router.post("/", verifyToken, async function (req, res) {
         res.status(500).json({ error: error.message });
     }
 });
-
 //Post Create List in Board
 router.post("/:boardId", verifyToken, async function (req, res) {
     try {
@@ -67,17 +66,17 @@ router.post("/:boardId/:listId", verifyToken, async function (req, res) {
 // GET single board
 router.get("/:boardId", verifyToken, async function (req, res) {
     try {
+        const boardId = req.params.boardId;
         const userId = req.user._id;
-        const board = await Board.findOne({
-            _id: req.params.boardId,
-            ownerId: userId,
-        });
+        const board = await Board.findOne({ _id: boardId, ownerId: userId });
+        const lists = await List.find({ boardId: boardId });
+        const cards = await Card.find({ listId: { $in: lists.map(list => list._id) } });
 
         if (!board) {
-            return res.status(404).json({ error: "Board not found or unauthorized" });
+            return res.status(404).json({ err: "Board not found or unauthorized" });
         }
 
-        res.json(board);
+        res.json({ board, lists, cards });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
