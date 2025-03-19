@@ -78,10 +78,12 @@ frontend/
 ### **Board Routes**
 | Method | Endpoint      | Description |
 |--------|-------------|-------------|
-| POST   | `/boards` | Create a new board |
-| GET    | `/boards` | Get all boards for the user |
-| PUT    | `/boards/:id` | Update board details |
-| DELETE | `/boards/:id` | Delete a board |
+| POST   | `/dashboard` | Create a new board |
+| POST   | `/dashboard` | Create a new board |
+| GET    | `/dashboard` | Get all boards for the user user is involved|
+| GET    | `/dashboard/:id` | Get specific boards for the user |
+| PUT    | `/dashboard/:id` | Update board details |
+| DELETE | `/dashboard/:id` | Delete a board |
 
 ### **List Routes**
 | Method | Endpoint      | Description |
