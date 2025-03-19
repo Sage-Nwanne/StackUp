@@ -6,6 +6,7 @@ const router = express.Router();
 // GET '/dashboard'
 //getting the dashboard
 router.get("/", verifyToken, async function (req, res) {
+   
     try {
     
         const userId = req.user._id;
