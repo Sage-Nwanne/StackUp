@@ -8,9 +8,10 @@ const router = express.Router();
 // GET '/dashboard'
 //getting the dashboard
 router.get("/", verifyToken, async function (req, res) {
+   
     try {
         const userId = req.user._id;
-        
+        console.log(userId);
         //if correct user, find the boards of user...
         const boards = await Board.find({ ownerId: userId });
         //if boards don't exist...
@@ -26,6 +27,7 @@ router.get("/", verifyToken, async function (req, res) {
 // POST '/dashboard'
 //posting a board to dashboard
 router.post("/", verifyToken, async function (req, res) {
+    console.log(req.user._id);
     try {
         const userId = req.user._id;
         const board = await Board.create({
