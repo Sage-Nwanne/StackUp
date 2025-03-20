@@ -11,7 +11,15 @@ const cardSchema = new mongoose.Schema(
             ref: "List",
             required: true,
         },
+         movementHistory: [
+            {
+              fromListId: { type: mongoose.Schema.Types.ObjectId, ref: "List" },
+              toListId: { type: mongoose.Schema.Types.ObjectId, ref: "List" },
+              timestamp: { type: Date, default: Date.now },
+            },
+        ]
     },
+
     { timestamps: true }
 );
 
