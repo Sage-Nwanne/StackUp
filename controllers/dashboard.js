@@ -11,7 +11,7 @@ router.get("/", verifyToken, async function (req, res) {
     
         const userId = req.user._id;
         //if correct user, find the boards of user...
-        const boards = await Board.find({ ownerId: userId });
+        const boards = await Board.find({ ownerId: userId, isAuthorized: userId }).populate("isAuthorized"); // Ensure the authorized users are populated
         //if boards don't exist...
         if (!boards) {
             return res.status(404).json({ err: "No boards found" });
@@ -23,17 +23,23 @@ router.get("/", verifyToken, async function (req, res) {
 });
 
 // POST '/dashboard'
-//posting a board to dashboard
 router.post("/", verifyToken, async function(req,res){
-    try{
+    try {
         const userId = req.user._id;
-        if(req.body.ownerId !== userId){
-            return res.status(403).json({err: "Unauthorized"});
-        } else {
-            const board = await Board.create(req.body);
-            res.status(201).json(board);
-        }
+        const authorizedUser = req.body.isAuthorized;
         
+        // Check if user is either the owner or authorized
+        if (req.body.ownerId !== userId && !authorizedUser.includes(userId)) {
+            return res.status(403).json({err: "Unauthorized - Must be owner or authorized user"});
+        }
+
+        const board = await Board.create({
+            ...req.body,
+            ownerId: userId, // Ensure current user is set as owner
+            isAuthorized: authorizedUser || [] // Keep the authorized users list
+        });
+        
+        res.status(201).json(board);
     } catch (error) {
         res.status(500).json({error: error.message});
     }
@@ -45,7 +51,8 @@ router.get("/:boardId", verifyToken, async function(req, res) {
         const userId = req.user._id;
         const board = await Board.findOne({
             _id: req.params.boardId,
-            ownerId: userId
+            ownerId: userId,
+            isAuthorized: userId
         });
 
         if (!board) {

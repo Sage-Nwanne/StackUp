@@ -11,6 +11,10 @@ const boardSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
+        isAuthorized: {
+            type: Array,
+            default: [],
+        }
     },
     { timestamps: true }
 );
