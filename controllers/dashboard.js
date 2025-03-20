@@ -45,67 +45,91 @@ router.post("/:boardId", verifyToken, async function (req, res) {
         const userId = req.user._id;
         const boardId = req.params.boardId;
 
+        // Find board and check ownership
         const board = await Board.findOne({ _id: boardId, ownerId: userId });
         if (!board) {
             return res.status(403).json({ error: "Unauthorized: You do not own this board" });
         }
 
+        // Create the new list
         const newList = await List.create({
             name: req.body.name,
             boardId: boardId,
         });
+
+        // Push the list's ID into the board's lists array
+        board.lists.push(newList._id);
+        await board.save(); // Save the updated board
+
         res.status(201).json(newList);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
+
 // Post Create Card in List
 router.post("/:boardId/:listId", verifyToken, async function (req, res) {
     try {
         const userId = req.user._id;
-        console.log(userId);
         const boardId = req.params.boardId;
         const listId = req.params.listId;
 
+        console.log("Board ID:", boardId);
+        console.log("List ID:", listId);
+
+        // Fetch the board to ensure it's owned by the user
         const board = await Board.findOne({ _id: boardId, ownerId: userId });
         if (!board) {
             return res.status(403).json({ error: "Unauthorized: You do not own this board" });
         }
 
+        // Fetch the list to ensure it's part of the board
         const list = await List.findOne({ _id: listId, boardId: boardId });
         if (!list) {
             return res.status(404).json({ error: "List not found in this board" });
         }
 
+        // Create the new card
         const newCard = await Card.create({
             name: req.body.name,
             listId: listId,
         });
-        res.status(201).json(newCard);
+
+        // Add the new card to the list's cards array
+        list.cards.push(newCard._id);
+        await list.save(); // Save the updated list
+
+        res.status(201).json(newCard); // Return the newly created card
     } catch (error) {
+        console.error(error); // Log the error
         res.status(500).json({ error: error.message });
     }
 });
+
 
 // GET single board
-router.get("/:boardId", verifyToken, async function (req, res) {
+router.get('/:boardId', verifyToken, async (req, res) => {
     try {
-        const boardId = req.params.boardId;
-        const userId = req.user._id;
-        console.log(userId);
-        const board = await Board.findOne({ _id: boardId, ownerId: userId });
-        if (!board) {
-            return res.status(404).json({ err: "Board not found or unauthorized" });
-        }
-        const lists = await List.find({ boardId: boardId });
-        const cards = await Card.find({ listId: { $in: lists.map((list) => list._id) } });
-
-        res.json({ board, lists, cards });
+      const { boardId } = req.params;
+      const board = await Board.findById(boardId)
+        .populate({
+          path: 'lists',
+          populate: {
+            path: 'cards',
+          },
+        })
+        .exec();
+  
+      if (!board) {
+        return res.status(404).json({ error: 'Board not found' });
+      }
+  
+      res.json(board); // Return the board with its lists and cards
     } catch (error) {
-        res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
-});
+  });
 
 // PUT update board
 router.put("/:boardId", verifyToken, async function (req, res) {
@@ -190,6 +214,40 @@ router.put("/:boardId/:listId/:cardId", verifyToken, async function (req, res) {
         res.status(500).json({ error: error.message });
     }
 });
+router.put("/:boardId/:listId/:cardId/move", verifyToken, async function (req, res) {
+    try {
+        const userId = req.user._id;
+        const { boardId, listId, cardId } = req.params;
+        const { newListId } = req.body; // The list to move the card to
+
+        const board = await Board.findOne({ _id: boardId, ownerId: userId });
+        if (!board) {
+            return res.status(403).json({ error: "Unauthorized: You do not own this board" });
+        }
+
+        const card = await Card.findOne({ _id: cardId, listId: listId });
+        if (!card) {
+            return res.status(404).json({ error: "Card not found in this list" });
+        }
+
+        // Add movement event to history
+        card.movementHistory.push({
+            fromListId: listId,
+            toListId: newListId,
+            timestamp: new Date(),
+        });
+
+        // Update the listId field
+        card.listId = newListId;
+
+        await card.save();
+
+        res.json(card);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // DELETE board
 router.delete("/:boardId", verifyToken, async function (req, res) {

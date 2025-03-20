@@ -14,7 +14,8 @@ const boardSchema = new mongoose.Schema(
         isAuthorized: {
             type: Array,
             default: [],
-        }
+        },
+        lists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'List' }],
     },
     { timestamps: true }
 );
