@@ -32,7 +32,6 @@ router.post("/", verifyToken, async function(req,res){
         const board = await Board.create({
             ...req.body,
             ownerId: userId, 
-            isAuthorized: authorizedUser || [] 
         });
         
         res.status(201).json(board);
