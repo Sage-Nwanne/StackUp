@@ -214,39 +214,55 @@ router.put("/:boardId/:listId/:cardId", verifyToken, async function (req, res) {
         res.status(500).json({ error: error.message });
     }
 });
-router.put("/:boardId/:listId/:cardId/move", verifyToken, async function (req, res) {
+
+router.put("/cards/:boardId/move/:cardId", async (req, res) => {
     try {
-        const userId = req.user._id;
-        const { boardId, listId, cardId } = req.params;
-        const { newListId } = req.body; // The list to move the card to
+        const { cardId } = req.params;
+        const { newListId } = req.body;
 
-        const board = await Board.findOne({ _id: boardId, ownerId: userId });
-        if (!board) {
-            return res.status(403).json({ error: "Unauthorized: You do not own this board" });
-        }
+        console.log(`Received request to move card ${cardId} to list ${newListId}`);
 
-        const card = await Card.findOne({ _id: cardId, listId: listId });
+        // Find the card
+        const card = await Card.findById(cardId);
         if (!card) {
-            return res.status(404).json({ error: "Card not found in this list" });
+            console.log(`Card with ID ${cardId} not found`); // Log when card is not found
+            return res.status(404).json({ error: "Card not found" });
         }
 
-        // Add movement event to history
-        card.movementHistory.push({
-            fromListId: listId,
-            toListId: newListId,
-            timestamp: new Date(),
-        });
+        // Find the old list
+        const oldList = await List.findById(card.listId);
+        if (!oldList) {
+            console.log(`Old list with ID ${card.listId} not found`); // Log when old list is not found
+            return res.status(404).json({ error: "Old list not found" });
+        }
 
-        // Update the listId field
+        // Remove card from the old list
+        oldList.cards = oldList.cards.filter(crdId => crdId.toString() !== cardId);
+        await oldList.save();
+
+        // Find the new list
+        const newList = await List.findById(newListId);
+        if (!newList) {
+            console.log(`New list with ID ${newListId} not found`); // Log when new list is not found
+            return res.status(404).json({ error: "New list not found" });
+        }
+
+        // Add card to the new list
+        newList.cards.push(cardId);
+        await newList.save();
+
+        // Update card's listId
         card.listId = newListId;
-
         await card.save();
 
-        res.json(card);
+        console.log(`Card ${cardId} moved successfully from ${card.listId} to ${newListId}`);
+        res.json({ message: "Card moved successfully", card });
     } catch (error) {
+        console.error("Error moving card:", error); // Log the error in case of failure
         res.status(500).json({ error: error.message });
     }
 });
+
 
 
 // DELETE board
