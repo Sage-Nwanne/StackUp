@@ -152,8 +152,9 @@ router.put("/:boardId", verifyToken, async function (req, res) {
             },
             { new: true }
         );
+    
 
-        res.json(updatedBoard);
+        res.status(200).json(updatedBoard);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -275,12 +276,11 @@ router.delete("/:boardId", verifyToken, async function (req, res) {
             _id: req.params.boardId,
             ownerId: userId,
         });
-
         if (!deletedBoard) {
             return res.status(404).json({ error: "Board not found or unauthorized" });
         }
-
-        res.status(204).send();
+        res.status(200).json(deletedBoard);
+        
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
