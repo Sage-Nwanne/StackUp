@@ -75,8 +75,7 @@ router.post("/:boardId/:listId", verifyToken, async function (req, res) {
         const boardId = req.params.boardId;
         const listId = req.params.listId;
 
-        console.log("Board ID:", boardId);
-        console.log("List ID:", listId);
+     
 
         // Fetch the board to ensure it's owned by the user
         const board = await Board.findOne({ _id: boardId, ownerId: userId });
@@ -221,19 +220,18 @@ router.put("/cards/:boardId/move/:cardId", async (req, res) => {
         const { cardId } = req.params;
         const { newListId } = req.body;
 
-        console.log(`Received request to move card ${cardId} to list ${newListId}`);
+    
 
         // Find the card
         const card = await Card.findById(cardId);
         if (!card) {
-            console.log(`Card with ID ${cardId} not found`); // Log when card is not found
+
             return res.status(404).json({ error: "Card not found" });
         }
 
         // Find the old list
         const oldList = await List.findById(card.listId);
         if (!oldList) {
-            console.log(`Old list with ID ${card.listId} not found`); // Log when old list is not found
             return res.status(404).json({ error: "Old list not found" });
         }
 
@@ -244,7 +242,7 @@ router.put("/cards/:boardId/move/:cardId", async (req, res) => {
         // Find the new list
         const newList = await List.findById(newListId);
         if (!newList) {
-            console.log(`New list with ID ${newListId} not found`); // Log when new list is not found
+          
             return res.status(404).json({ error: "New list not found" });
         }
 
@@ -255,8 +253,6 @@ router.put("/cards/:boardId/move/:cardId", async (req, res) => {
         // Update card's listId
         card.listId = newListId;
         await card.save();
-
-        console.log(`Card ${cardId} moved successfully from ${card.listId} to ${newListId}`);
         res.json({ message: "Card moved successfully", card });
     } catch (error) {
         console.error("Error moving card:", error); // Log the error in case of failure
@@ -271,7 +267,6 @@ router.delete("/:boardId", verifyToken, async function (req, res) {
     try {
         const userId = req.user._id;
 
-        // Find and delete the board only if it belongs to the user
         const deletedBoard = await Board.findOneAndDelete({
             _id: req.params.boardId,
             ownerId: userId,
@@ -279,8 +274,7 @@ router.delete("/:boardId", verifyToken, async function (req, res) {
         if (!deletedBoard) {
             return res.status(404).json({ error: "Board not found or unauthorized" });
         }
-        res.status(200).json(deletedBoard);
-        
+        res.status(200).json({ message: "Board deleted successfully" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -310,8 +304,8 @@ router.delete("/:boardId/:listId", verifyToken, async function (req, res) {
             return res.status(404).json({ error: "Failed to delete the list" });
         }
 
-        // Respond with a 204 No Content status for successful deletion
-        res.status(204).send();
+       
+        res.status(200).json(deletedList);
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -327,7 +321,7 @@ router.delete("/:boardId/:listId/:cardId", verifyToken, async function (req, res
         if (!deletedCard) {
             return res.status(404).json({ error: "Failed to delete the card" });
         }
-        res.status(204).send();
+        res.status(200).json(deletedCard);
     } catch (error) {
         res.status(500).json({ error: error.message });
         
