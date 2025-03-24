@@ -3,9 +3,9 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const app = express();
-const mongoose = require('mongoose');
 const cors = require('cors');
 const logger = require('morgan');
+const mongoose = require('mongoose');
 
 // Import routers
 const authRouter = require('./controllers/auth');
